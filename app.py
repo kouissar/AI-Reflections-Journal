@@ -83,7 +83,7 @@ def new_entry_page():
                      help="1 = Very Low, 5 = Very High")
     
     prompt = generate_prompt(mood)
-    st.write("📝 Prompt for reflection:", prompt)
+    st.write("📝", prompt)
     
     mood_factors = st.multiselect(
         "What factors are influencing your mood?",

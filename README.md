@@ -43,6 +43,10 @@ _Get therapeutic insights and suggestions from the AI_
 ## Installation
 
 1. Clone the repository:
+   ```
+   git clone https://github.com/kouissar/AI-Reflections-Journal.git
+   cd AI-Reflections-Journal
+   ```
 2. Create and activate a virtual environment:
 
 ````bash
