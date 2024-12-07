@@ -3,9 +3,16 @@ base="dark"
 backgroundColor="#26324c"
 secondaryBackgroundColor="#34484c"
 
-
 [browser]
 gatherUsageStats = false
 
 [server]
 enableStaticServing = true
+
+[llm]
+ollama_model = "llama3.2:1b"
+groq_model = "llama3-8b-8192"
+default_provider = "ollama"
+
+[location]
+zip_code = "20871"

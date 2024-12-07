@@ -10,6 +10,7 @@ from database import ReflectionDB
 from ai_services import AIService
 from weather_service import WeatherService
 import json
+from typing import Literal
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def display_daily_quote():
     if 'daily_quote' not in st.session_state:
-        ai_service = AIService()
+        ai_service = AIService(provider=st.session_state.llm_provider)
         st.session_state.daily_quote = ai_service.generate_daily_quote()
     st.caption("Daily motivational quote:")
     st.markdown(f"*{st.session_state.daily_quote}*", help="Daily AI-generated inspiration")
@@ -95,7 +96,7 @@ def new_entry_page():
     if st.button("Save Entry"):
         if content:
             # Get AI analysis first
-            ai_service = AIService()
+            ai_service = AIService(provider=st.session_state.llm_provider)
             analysis = ai_service.analyze_entry(
                 content,
                 mood,
@@ -249,6 +250,26 @@ def main():
         st.session_state.db = ReflectionDB()
     
     st.title("AI Reflection Journal")
+    
+    # Add LLM provider selection
+    with st.sidebar:
+        st.sidebar.title("Settings")
+        llm_provider = st.sidebar.selectbox(
+            "Select LLM Provider",
+            options=["ollama", "groq"],
+            index=0,
+            help="Choose between local Ollama or cloud-based Groq"
+        )
+        
+        # Store the selected provider in session state
+        if 'llm_provider' not in st.session_state or st.session_state.llm_provider != llm_provider:
+            st.session_state.llm_provider = llm_provider
+            # Clear any existing AI service instance
+            if 'ai_service' in st.session_state:
+                del st.session_state.ai_service
+            if 'daily_quote' in st.session_state:
+                del st.session_state.daily_quote
+    
     display_daily_quote()  # Add the daily quote right under the title
     
     # Replace radio buttons with sidebar links
