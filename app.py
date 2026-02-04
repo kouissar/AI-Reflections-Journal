@@ -193,7 +193,8 @@ def past_entries_page():
                     st.write(f"🌡️ {weather['temperature']}°F - {weather['description']}")
                     st.write(f"💧 Humidity: {weather['humidity']}%")
                 
-                score = TextBlob(entry['content']).sentiment.polarity
+                sentiment = TextBlob(entry['content']).sentiment  # type: ignore[attr-defined]
+                score = sentiment.polarity  # type: ignore[attr-defined]
                 sent = ""
                 if score > 0:
                     sent = "Positive"
@@ -256,9 +257,9 @@ def main():
         st.sidebar.title("Settings")
         llm_provider = st.sidebar.selectbox(
             "Select LLM Provider",
-            options=["ollama", "groq"],
+            options=["ollama"],
             index=0,
-            help="Choose between local Ollama or cloud-based Groq"
+            help="Ollama only option for now. Public LLM providers cannot be trusted with personal info."
         )
         
         # Store the selected provider in session state

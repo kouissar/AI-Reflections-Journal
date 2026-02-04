@@ -1,7 +1,6 @@
 import logging
 import random
 from langchain_ollama.llms import OllamaLLM
-#from langchain_groq import ChatGroq
 import streamlit as st
 from langchain_core.prompts import PromptTemplate
 import os
@@ -17,15 +16,6 @@ class AIService:
                     model="dolphin3:latest",
                     base_url="http://localhost:11434",
                 )
-            # elif provider == "groq":
-            #     groq_api_key = st.secrets.get("llm", {}).get("groq_api_key", "")
-            #     print(groq_api_key)
-            #     if not groq_api_key:
-            #         raise ValueError("Groq API key not found in secrets")
-            #     self.llm = ChatGroq(
-            #         api_key=groq_api_key,
-            #         model_name="llama3-8b-8192"
-            #     )
             logger.info(f"AI Service initialized successfully with {provider}")
         except Exception as e:
             logger.error(f"Error initializing AI service: {str(e)}")
@@ -44,9 +34,6 @@ class AIService:
             )
             
             response = self.llm.invoke(prompt.format())
-            # Handle different response types
-            # if hasattr(response, 'content'):  # ChatMessage object from Groq
-            #     return response.content.strip()
             return response.strip()  # String from Ollama
             
         except Exception as e:
@@ -85,9 +72,6 @@ class AIService:
                     factors=mood_factors if mood_factors else "None specified"
                 )
             )
-            # Handle different response types
-            # if hasattr(response, 'content'):  # ChatMessage object from Groq
-            #     return response.content.strip()
             return response.strip()  # String from Ollama
             
         except Exception as e:

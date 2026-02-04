@@ -10,9 +10,8 @@ gatherUsageStats = false
 enableStaticServing = true
 
 [llm]
-ollama_model = "llama3.2:1b"
-groq_model = "llama3-8b-8192"
+ollama_model = "dolphin3:latest"
 default_provider = "ollama"
 
 [location]
-zip_code = "20871"
+zip_code = "68164"
