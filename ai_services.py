@@ -12,19 +12,30 @@ class AIService:
     def __init__(self, provider="ollama"):
         try:
             self.provider = provider
+            # Get settings from secrets
+            llm_secrets = st.secrets.get("llm", {})
+            ollama_model = llm_secrets.get("ollama_model", "llama3.2:1b")
+            groq_model = llm_secrets.get("groq_model", "llama3-8b-8192")
+            
             if provider == "ollama":
                 self.llm = Ollama(
-                    model="llama3.2:1b",
+                    model=ollama_model,
                     base_url="http://localhost:11434",
                 )
             elif provider == "groq":
-                groq_api_key = st.secrets.get("llm", {}).get("groq_api_key", "")
-                print(groq_api_key)
+                groq_api_key = llm_secrets.get("groq_api_key", "")
                 if not groq_api_key:
                     raise ValueError("Groq API key not found in secrets")
+                
+                # Workaround for 'proxies' error in some Groq client versions
+                # Unset proxy environment variables if they exist
+                for var in ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']:
+                    if var in os.environ:
+                        del os.environ[var]
+                
                 self.llm = ChatGroq(
                     api_key=groq_api_key,
-                    model_name="llama3-8b-8192"
+                    model_name=groq_model
                 )
             logger.info(f"AI Service initialized successfully with {provider}")
         except Exception as e:

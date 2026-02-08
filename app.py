@@ -56,22 +56,32 @@ def generate_prompt(mood):
 
 def display_weather():
     if 'weather_service' not in st.session_state:
-        api_key = st.secrets.get("weather", {}).get("openweather_api_key", "")
+        # Check for multiple possible key names for flexibility
+        api_key = st.secrets.get("weather", {}).get("api_key") or \
+                  st.secrets.get("weather", {}).get("openweather_api_key") or ""
         st.session_state.weather_service = WeatherService(api_key)
     
-    zip_code = st.secrets.get("weather", {}).get("zip_code", "")
+    zip_code = st.secrets.get("weather", {}).get("zip_code", "20871") # Default zip code
     
-    if not zip_code or not st.session_state.weather_service.api_key:
-        st.sidebar.warning("⚙️ Weather service not configured. Please set API key and zip code in config.")
+    if not st.session_state.weather_service.api_key:
+        st.sidebar.warning("⚠️ Weather API key missing. Please add it to your secrets.")
         return None
     
-    weather_info = st.session_state.weather_service.get_weather(zip_code)
-    if weather_info:
-        st.sidebar.markdown("### Current Weather")
-        st.sidebar.write(f"🌡️ {weather_info['temperature']}°F")
-        st.sidebar.write(f"☁️ {weather_info['description']}")
-        st.sidebar.write(f"💧 Humidity: {weather_info['humidity']}%")
-        return weather_info
+    try:
+        weather_info = st.session_state.weather_service.get_weather(zip_code)
+        if weather_info:
+            st.sidebar.markdown("---")
+            st.sidebar.markdown(f"### Current Weather in {zip_code}")
+            col1, col2 = st.sidebar.columns(2)
+            with col1:
+                st.write(f"🌡️ **{weather_info['temperature']}°F**")
+            with col2:
+                st.write(f"☁️ {weather_info['description']}")
+            st.sidebar.write(f"💧 Humidity: {weather_info['humidity']}%")
+            return weather_info
+    except Exception as e:
+        st.sidebar.error(f"Weather error: {str(e)}")
+    
     return None
 
 def new_entry_page():
